@@ -1,11 +1,8 @@
 package de.ait_tr.g_38_jp_shop.controller;
 
-import de.ait_tr.g_38_jp_shop.domain.entity.Product;
+import de.ait_tr.g_38_jp_shop.domain.dto.ProductDto;
 import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
@@ -17,8 +14,13 @@ public class ProductController {
         this.service = service;
     }
 
-    @GetMapping("/example/{id}")
-    public Product getById(@PathVariable Long id) {
+    @GetMapping
+    public ProductDto getById(@RequestParam Long id) {
         return service.getById(id);
+    }
+
+    @PostMapping
+    public ProductDto save(@RequestBody ProductDto product) {
+        return service.save(product);
     }
 }

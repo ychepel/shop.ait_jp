@@ -1,8 +1,10 @@
 package de.ait_tr.g_38_jp_shop.service;
 
+import de.ait_tr.g_38_jp_shop.domain.dto.ProductDto;
 import de.ait_tr.g_38_jp_shop.domain.entity.Product;
 import de.ait_tr.g_38_jp_shop.repository.ProductRepository;
 import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
+import de.ait_tr.g_38_jp_shop.service.mapping.ProductMappingService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,23 +14,25 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private ProductRepository repository;
+    private ProductMappingService mappingService;
 
-    public ProductServiceImpl(ProductRepository repository) {
+    public ProductServiceImpl(ProductRepository repository, ProductMappingService mappingService) {
         this.repository = repository;
+        this.mappingService = mappingService;
     }
 
     @Override
-    public Product save(Product product) {
+    public ProductDto save(ProductDto product) {
         return null;
     }
 
     @Override
-    public List<Product> getAll() {
+    public List<ProductDto> getAll() {
         return List.of();
     }
 
     @Override
-    public Product getById(Long id) {
+    public ProductDto getById(Long id) {
         if (id == null || id < 1) {
             throw new RuntimeException("Product ID is invalid");
         }
@@ -39,11 +43,11 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Product not found");
         }
 
-        return product;
+        return mappingService.mapEntityToDto(product);
     }
 
     @Override
-    public void update(Product product) {
+    public void update(ProductDto product) {
 
     }
 
