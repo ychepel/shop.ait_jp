@@ -8,7 +8,9 @@ import de.ait_tr.g_38_jp_shop.service.mapping.ProductMappingService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -30,9 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAll() {
-        return repository.findAll()
-                .stream()
-                .filter(Product::isActive)
+        return getFilteredSTream()
                 .map(mappingService::mapEntityToDto)
                 .toList();
     }
@@ -48,42 +48,59 @@ public class ProductServiceImpl implements ProductService {
         if (product == null) {
             throw new RuntimeException("Product not found");
         }
+        if (!product.isActive() || product.isDeleted()) {
+            return null;
+        }
 
         return mappingService.mapEntityToDto(product);
     }
 
     @Override
-    public void update(ProductDto product) {
-
+    public void update(ProductDto productDto) {
+        Product product = mappingService.mapDtoToEntity(productDto);
+        repository.save(product);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        repository.deleteById(id);
     }
 
     @Override
     public void deleteByTitle(String title) {
-
+        Product product = repository.findByTitle(title);
+        repository.delete(product);
     }
 
     @Override
     public void restoreById(Long id) {
-
+        Product product = repository.findById(id).orElse(null);
+        if (product != null) {
+            product.setDeleted(false);
+            repository.save(product);
+        }
     }
 
     @Override
     public int getTotalQuantity() {
-        return 0;
+        return (int) getFilteredSTream().count();
     }
 
     @Override
     public BigDecimal getTotalPrice() {
-        return null;
+        return getFilteredSTream()
+                .map(Product::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public BigDecimal getAveragePrice() {
-        return null;
+        return getTotalPrice().divide(new BigDecimal(getTotalQuantity()), RoundingMode.HALF_UP);
+    }
+
+    private Stream<Product> getFilteredSTream() {
+        return repository.findAll()
+                .stream()
+                .filter(product -> product.isActive() && !product.isDeleted());
     }
 }

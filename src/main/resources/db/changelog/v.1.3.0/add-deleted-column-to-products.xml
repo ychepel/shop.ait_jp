@@ -4,9 +4,12 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <include file="v.1.0.0/changelog.xml" relativeToChangelogFile="true"/>
-    <include file="v.1.1.0/changelog.xml" relativeToChangelogFile="true"/>
-    <include file="v.1.2.0/changelog.xml" relativeToChangelogFile="true"/>
-    <include file="v.1.3.0/changelog.xml" relativeToChangelogFile="true"/>
+    <changeSet id="add_deleted_column_to_products" author="ychepel">
+        <addColumn tableName="product">
+            <column name="deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
