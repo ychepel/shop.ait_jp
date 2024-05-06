@@ -23,8 +23,8 @@ public class TokenService {
     private static final int ACCESS_TOKEN_EXPIRATION_DAYS = 7;
     private static final int REFRESH_TOKEN_EXPIRATION_DAYS = 30;
 
-    private static final String ROLES_IN_CLAIM_KEY = "roles";
-    private static final String USERNAME_IN_CLAIM_KEY = "name";
+    private static final String ROLES_VARIABLE = "roles";
+    private static final String USERNAME_VARIABLE = "name";
 
     private SecretKey accessKey;
     private SecretKey refreshKey;
@@ -52,8 +52,8 @@ public class TokenService {
                 .subject(user.getUsername())
                 .expiration(expirationDate)
                 .signWith(accessKey)
-                .claim(ROLES_IN_CLAIM_KEY, user.getAuthorities())
-                .claim(USERNAME_IN_CLAIM_KEY, user.getUsername())
+                .claim(ROLES_VARIABLE, user.getAuthorities())
+                .claim(USERNAME_VARIABLE, user.getUsername())
                 .compact();
     }
 
@@ -110,7 +110,7 @@ public class TokenService {
 
     public AuthInfo mapClaimsToAuthInfo(Claims claims) {
         String username = claims.getSubject();
-        List<LinkedHashMap<String, String>> rolesList = (List<LinkedHashMap<String, String>>) claims.get(ROLES_IN_CLAIM_KEY);
+        List<LinkedHashMap<String, String>> rolesList = (List<LinkedHashMap<String, String>>) claims.get(ROLES_VARIABLE);
         Set<Role> roles = new HashSet<>();
 
         for (LinkedHashMap<String, String> roleEntry : rolesList) {
