@@ -24,8 +24,8 @@ public class Customer {
     @Column(name = "deleted")
     private boolean isDeleted;
 
-    @Column(name = "cart_id")
-    private Long cartId;
+    @OneToOne(mappedBy = "customer")
+    private Cart cart;
 
     public Customer() {
     }
@@ -46,10 +46,6 @@ public class Customer {
         isActive = active;
     }
 
-    public Long getCartId() {
-            return cartId;
-    }
-
     public boolean isDeleted() {
         return isDeleted;
     }
@@ -66,8 +62,12 @@ public class Customer {
         isDeleted = deleted;
     }
 
-    public void setCartId(Long cartId) {
-        this.cartId = cartId;
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     @Override
@@ -75,17 +75,17 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return isActive == customer.isActive && Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(cartId, customer.cartId);
+        return isActive == customer.isActive && isDeleted == customer.isDeleted && Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(cart, customer.cart);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, isActive, cartId);
+        return Objects.hash(id, name, isActive, isDeleted, cart);
     }
 
     @Override
     public String toString() {
-        return String.format("Customer: ID - %d, name - %s, cartID - %d, active - %s",
-                id, name, cartId, isActive ? "yes" : "no");
+        return String.format("Customer: ID - %d, name - %s, active - %s, cart - %s",
+                id, name, isActive ? "yes" : "no", cart);
     }
 }

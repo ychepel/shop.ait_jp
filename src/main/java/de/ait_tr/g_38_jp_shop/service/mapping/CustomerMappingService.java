@@ -12,7 +12,6 @@ public interface CustomerMappingService {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")
-    @Mapping(target = "cartId", source = "cartId")
     @Mapping(target = "active", constant = "true")
     public Customer mapDtoToEntity(CustomerDto dto);
 }
