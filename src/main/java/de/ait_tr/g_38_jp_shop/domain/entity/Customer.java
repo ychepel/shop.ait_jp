@@ -1,11 +1,13 @@
 package de.ait_tr.g_38_jp_shop.domain.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "customer")
+@SQLDelete(sql = "UPDATE customer SET deleted = true WHERE id=?")
 public class Customer {
 
     @Id
@@ -18,6 +20,9 @@ public class Customer {
 
     @Column(name = "is_active")
     private boolean isActive;
+
+    @Column(name = "deleted")
+    private boolean isDeleted;
 
     @Column(name = "cart_id")
     private Long cartId;
@@ -33,12 +38,36 @@ public class Customer {
         return name;
     }
 
-    public boolean getIsActive() {
+    public boolean isActive() {
         return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public Long getCartId() {
             return cartId;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
     }
 
     @Override

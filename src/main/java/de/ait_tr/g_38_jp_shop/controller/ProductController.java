@@ -44,6 +44,11 @@ public class ProductController {
         }
     }
 
+    @PutMapping("/restore")
+    public void setActive(@RequestParam Long id) {
+        service.restoreById(id);
+    }
+
     @GetMapping("/total-quantity")
     public int getTotalQuantity() {
         return service.getTotalQuantity();
