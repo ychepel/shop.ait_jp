@@ -18,7 +18,6 @@ public class AuthInfo implements Authentication {
         this.roles = roles;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -53,6 +52,4 @@ public class AuthInfo implements Authentication {
     public String getName() {
         return username;
     }
-
-
 }
