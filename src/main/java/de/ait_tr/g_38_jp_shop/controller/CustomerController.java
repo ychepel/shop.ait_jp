@@ -4,8 +4,6 @@ import de.ait_tr.g_38_jp_shop.domain.dto.CustomerDto;
 import de.ait_tr.g_38_jp_shop.service.interfaces.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -17,11 +15,13 @@ public class CustomerController {
     }
 
     @GetMapping
-    public Object get(@RequestParam Optional<Long> id) {
-        if (id.isEmpty()) {
-            return service.getAll();
-        }
-        return service.getById(id.get());
+    public Object getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public Object get(@PathVariable Long id) {
+        return service.getById(id);
     }
 
     @PostMapping

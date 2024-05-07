@@ -26,13 +26,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto save(ProductDto productDto) {
         Product product = mappingService.mapDtoToEntity(productDto);
+        product.setId(null);
         repository.save(product);
         return mappingService.mapEntityToDto(product);
     }
 
     @Override
     public List<ProductDto> getAll() {
-        return getFilteredSTream()
+        return getFilteredStream()
                 .map(mappingService::mapEntityToDto)
                 .toList();
     }
@@ -58,7 +59,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void update(ProductDto productDto) {
         Product product = mappingService.mapDtoToEntity(productDto);
-        product.setId(productDto.getProductId());
         repository.save(product);
     }
 
@@ -84,12 +84,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public int getTotalQuantity() {
-        return (int) getFilteredSTream().count();
+        return (int) getFilteredStream().count();
     }
 
     @Override
     public BigDecimal getTotalPrice() {
-        return getFilteredSTream()
+        return getFilteredStream()
                 .map(Product::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -99,9 +99,10 @@ public class ProductServiceImpl implements ProductService {
         return getTotalPrice().divide(new BigDecimal(getTotalQuantity()), RoundingMode.HALF_UP);
     }
 
-    private Stream<Product> getFilteredSTream() {
+    private Stream<Product> getFilteredStream() {
         return repository.findAll()
                 .stream()
-                .filter(product -> product.isActive() && !product.isDeleted());
+                .filter(Product::isActive)
+                .filter(product -> !product.isDeleted());
     }
 }

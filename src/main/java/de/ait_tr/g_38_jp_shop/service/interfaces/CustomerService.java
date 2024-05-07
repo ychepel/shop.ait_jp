@@ -1,7 +1,10 @@
 package de.ait_tr.g_38_jp_shop.service.interfaces;
 
+import de.ait_tr.g_38_jp_shop.domain.dto.CartProductDto;
 import de.ait_tr.g_38_jp_shop.domain.dto.CustomerDto;
+import de.ait_tr.g_38_jp_shop.domain.entity.Product;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface CustomerService {
@@ -14,14 +17,9 @@ public interface CustomerService {
     void deleteByName(String name);
     void restoreById(Long id);
     int getTotalQuantity();
-
-    //TODO: add cart methods
-    /*
-     * Return the cost of the customer's basket by its identifier (if it is active).
-     * Return the average cost of a product in the customer's basket by its identifier (if it is active).
-     * Add a product to the customer's basket by their identifiers (if both are active).
-     * Remove a product from the customer's basket by their identifiers.
-     * Completely clear the customer's basket by its identifier (if it is active).
-     */
-
+    BigDecimal getCartTotalPrice(Long customerId);
+    BigDecimal getCartAveragePrice(Long customerId);
+    List<Product> addProductToCart(CartProductDto cartProductDto);
+    List<Product> removeProductFromCart(CartProductDto cartProductDto);
+    void clearCart(Long customerId);
 }
