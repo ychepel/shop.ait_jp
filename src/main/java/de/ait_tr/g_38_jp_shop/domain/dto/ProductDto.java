@@ -41,7 +41,7 @@ public class ProductDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductDto that = (ProductDto) o;
-        return Objects.equals(productId, that.productId) && Objects.equals(title, that.title) && Objects.equals(price, that.price);
+        return Objects.equals(productId, that.productId) && Objects.equals(title, that.title) && Objects.equals(price.doubleValue(), that.price.doubleValue());
     }
 
     @Override

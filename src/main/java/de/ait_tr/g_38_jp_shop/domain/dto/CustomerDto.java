@@ -6,7 +6,6 @@ public class CustomerDto {
 
     private Long id;
     private String name;
-    private Long cartId;
 
     public CustomerDto() {
     }
@@ -27,29 +26,21 @@ public class CustomerDto {
         this.name = name;
     }
 
-    public Long getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Long cartId) {
-        this.cartId = cartId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomerDto that = (CustomerDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(cartId, that.cartId);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, cartId);
+        return Objects.hash(id, name);
     }
 
     @Override
     public String toString() {
-        return String.format("Customer DTO: ID - %d, name - %s, cart ID - %d", id, name, cartId);
+        return String.format("Customer DTO: ID - %d, name - %s", id, name);
     }
 }
