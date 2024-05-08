@@ -18,6 +18,11 @@ public class CartController {
         this.service = service;
     }
 
+    @GetMapping
+    public List<Product> getCartProducts(@RequestParam Long customerId) {
+        return service.getCartProducts(customerId);
+    }
+
     @GetMapping("/total-price")
     public BigDecimal getCartTotalPrice(@RequestParam Long customerId) {
         return service.getCartTotalPrice(customerId);

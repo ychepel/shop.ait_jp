@@ -17,6 +17,7 @@ public interface CustomerService {
     void deleteByName(String name);
     void restoreById(Long id);
     int getTotalQuantity();
+    List<Product> getCartProducts(Long customerId);
     BigDecimal getCartTotalPrice(Long customerId);
     BigDecimal getCartAveragePrice(Long customerId);
     List<Product> addProductToCart(CartProductDto cartProductDto);

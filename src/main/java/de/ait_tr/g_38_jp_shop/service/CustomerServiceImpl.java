@@ -92,6 +92,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public List<Product> getCartProducts(Long customerId) {
+        Optional<Customer> customer = getActiveCustomer(customerId);
+        return customer.map(value -> value.getCart().getProducts()).orElse(null);
+
+    }
+
+    @Override
     public BigDecimal getCartTotalPrice(Long customerId) {
         Optional<Customer> customer = getActiveCustomer(customerId);
         if (customer.isEmpty()) {
