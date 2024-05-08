@@ -6,6 +6,13 @@ spring:
     password: qwerty-123
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+
 key: #https://www.devglan.com/online-tools/hmac-sha256-online
   access: Ws9n8o7ICr7NEmduNZTOi1AKtxRZflHwybQ11tcdtN8=
   refresh: wbHZNJr/QF07z0i58Aa+j/WXdvMTRqVj3bWQ91Ja1Zs=
+
+logging:
+  file:
+    name: logs/app.log
+  level:
+    root: info

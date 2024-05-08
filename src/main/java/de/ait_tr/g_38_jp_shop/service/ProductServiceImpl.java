@@ -5,6 +5,8 @@ import de.ait_tr.g_38_jp_shop.domain.entity.Product;
 import de.ait_tr.g_38_jp_shop.repository.ProductRepository;
 import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
 import de.ait_tr.g_38_jp_shop.service.mapping.ProductMappingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ProductRepository repository;
     private ProductMappingService mappingService;
@@ -40,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto getById(Long id) {
         if (id == null || id < 1) {
+            logger.warn("Invalid product id = {}", id);
             throw new RuntimeException("Product ID is invalid");
         }
 
