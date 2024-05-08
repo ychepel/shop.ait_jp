@@ -2,6 +2,10 @@ package de.ait_tr.g_38_jp_shop.service;
 
 import de.ait_tr.g_38_jp_shop.domain.dto.ProductDto;
 import de.ait_tr.g_38_jp_shop.domain.entity.Product;
+import de.ait_tr.g_38_jp_shop.exception_handling.exception.ProductSaveException;
+import de.ait_tr.g_38_jp_shop.exception_handling.exception.InvalidRequestException;
+import de.ait_tr.g_38_jp_shop.exception_handling.exception.ProductNotFoundException;
+import de.ait_tr.g_38_jp_shop.exception_handling.exception.ProductUpdateException;
 import de.ait_tr.g_38_jp_shop.repository.ProductRepository;
 import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
 import de.ait_tr.g_38_jp_shop.service.mapping.ProductMappingService;
@@ -29,10 +33,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto save(ProductDto productDto) {
-        Product product = mappingService.mapDtoToEntity(productDto);
-        product.setId(null);
-        repository.save(product);
-        return mappingService.mapEntityToDto(product);
+        try {
+            Product product = mappingService.mapDtoToEntity(productDto);
+            product.setId(null);
+            repository.save(product);
+            return mappingService.mapEntityToDto(product);
+        } catch (Exception e) {
+            throw new ProductSaveException("Trying to save invalid product", e);
+        }
     }
 
     @Override
@@ -46,13 +54,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto getById(Long id) {
         if (id == null || id < 1) {
             logger.warn("Invalid product id = {}", id);
-            throw new RuntimeException("Product ID is invalid");
+            throw new InvalidRequestException("Product ID is invalid");
         }
 
         Product product = repository.findById(id).orElse(null);
 
         if (product == null) {
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundException("Product not found");
         }
         if (!product.isActive() || product.isDeleted()) {
             return null;
@@ -63,8 +71,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void update(ProductDto productDto) {
-        Product product = mappingService.mapDtoToEntity(productDto);
-        repository.save(product);
+        try {
+            Product product = mappingService.mapDtoToEntity(productDto);
+            repository.save(product);
+        } catch (Exception e) {
+            throw new ProductUpdateException("Product cannot be updated", e);
+        }
     }
 
     @Override

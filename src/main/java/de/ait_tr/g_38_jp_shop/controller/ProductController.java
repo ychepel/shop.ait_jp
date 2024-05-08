@@ -1,7 +1,11 @@
 package de.ait_tr.g_38_jp_shop.controller;
 
 import de.ait_tr.g_38_jp_shop.domain.dto.ProductDto;
+import de.ait_tr.g_38_jp_shop.exception_handling.Response;
+import de.ait_tr.g_38_jp_shop.exception_handling.ThrowableController;
+import de.ait_tr.g_38_jp_shop.exception_handling.exception.InvalidRequestException;
 import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -9,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
-public class ProductController {
+public class ProductController implements ThrowableController {
 
     private ProductService service;
 
@@ -64,5 +68,11 @@ public class ProductController {
     @GetMapping("/average-price")
     public BigDecimal getAveragePrice() {
         return service.getAveragePrice();
+    }
+
+    @ExceptionHandler(InvalidRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response handleException(InvalidRequestException e) {
+        return new Response(e.getMessage());
     }
 }
