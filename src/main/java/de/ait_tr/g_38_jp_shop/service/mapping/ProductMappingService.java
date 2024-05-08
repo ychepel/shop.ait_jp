@@ -11,7 +11,7 @@ public interface ProductMappingService {
     @Mapping(target = "productId", source = "id")
     public ProductDto mapEntityToDto(Product entity);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", source = "productId")
     @Mapping(target = "active", constant = "true")
     public Product mapDtoToEntity(ProductDto dto);
 }

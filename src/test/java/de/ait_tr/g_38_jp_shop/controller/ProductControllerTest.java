@@ -1,33 +1,31 @@
 package de.ait_tr.g_38_jp_shop.controller;
 
 import de.ait_tr.g_38_jp_shop.domain.dto.ProductDto;
+import de.ait_tr.g_38_jp_shop.domain.entity.Product;
 import de.ait_tr.g_38_jp_shop.domain.entity.Role;
 import de.ait_tr.g_38_jp_shop.domain.entity.User;
 import de.ait_tr.g_38_jp_shop.repository.ProductRepository;
 import de.ait_tr.g_38_jp_shop.repository.RoleRepository;
 import de.ait_tr.g_38_jp_shop.repository.UserRepository;
 import de.ait_tr.g_38_jp_shop.security.dto.TokenResponseDto;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
 class ProductControllerTest {
 
     @LocalServerPort
@@ -129,8 +127,70 @@ class ProductControllerTest {
     }
 
     @Test
-    public void test() {
-
+    @Order(0)
+    public void testSaveProduct() {
+        headers = new HttpHeaders();
+        headers.add("Authorization", adminAccessToken);
+        HttpEntity<ProductDto> request = new HttpEntity<>(testProduct, headers);
+        String url = URL_PREFIX + port + "/products";
+        template = new TestRestTemplate();
+        ResponseEntity<ProductDto> response = template.exchange(url, HttpMethod.POST, request, ProductDto.class);
+        ProductDto responseDto = response.getBody();
+        assertNotNull(responseDto, "Product saving response body is null");
+        assertNotNull(responseDto.getProductId(), "No product ID were returned");
+        assertEquals(testProduct.getTitle(), responseDto.getTitle(), "Response product name is invalid");
     }
 
+    @Test
+    @Order(1)
+    public void testGetProduct() {
+        Product storedProduct = productRepository.findByTitle(testProduct.getTitle());
+        headers = new HttpHeaders();
+        headers.add("Authorization", adminAccessToken);
+        String url = URL_PREFIX + port + "/products/" + storedProduct.getId();
+        template = new TestRestTemplate();
+        ResponseEntity<ProductDto> response = template.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), ProductDto.class);
+        ProductDto responseProductDto = response.getBody();
+        assertEquals(storedProduct.getId(), responseProductDto.getProductId(), "Returned product ID is incorrect");
+        responseProductDto.setProductId(null);
+        assertEquals(testProduct, responseProductDto, "Returned product is invalid");
+    }
+
+    @Test
+    @Order(2)
+    public void testDeleteProductById() {
+        Product storedProduct = productRepository.findByTitle(testProduct.getTitle());
+        headers = new HttpHeaders();
+        headers.add("Authorization", adminAccessToken);
+        String url = URL_PREFIX + port + "/products?id=" + storedProduct.getId();
+        template = new TestRestTemplate();
+        ResponseEntity<Object> response = template.exchange(url, HttpMethod.DELETE, new HttpEntity<>(headers), Object.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Deleting response code is incorrect");
+    }
+
+    @Test
+    @Order(3)
+    public void testRestoreProduct() {
+        Product storedProduct = productRepository.findByTitle(testProduct.getTitle());
+        headers = new HttpHeaders();
+        headers.add("Authorization", adminAccessToken);
+        String url = URL_PREFIX + port + "/products/restore?id=" + storedProduct.getId();
+        template = new TestRestTemplate();
+        ResponseEntity<Object> response = template.exchange(url, HttpMethod.PUT, new HttpEntity<>(headers), Object.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Restoring response code is incorrect");
+    }
+
+    @Test
+    @Order(4)
+    public void testDeleteProductByTitle() {
+        Product storedProduct = productRepository.findByTitle(testProduct.getTitle());
+        headers = new HttpHeaders();
+        headers.add("Authorization", adminAccessToken);
+        String url = URL_PREFIX + port + "/products?title=" + storedProduct.getTitle();
+        template = new TestRestTemplate();
+        ResponseEntity<ProductDto> response = template.exchange(url, HttpMethod.DELETE, new HttpEntity<>(headers), ProductDto.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Deleting response code is incorrect");
+    }
+
+    //TODO: clean DB after all tests
 }

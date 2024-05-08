@@ -1,11 +1,13 @@
 package de.ait_tr.g_38_jp_shop.domain.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "customer")
+@SQLDelete(sql = "UPDATE customer SET deleted = true WHERE id=?")
 public class Customer {
 
     @Id
@@ -19,8 +21,11 @@ public class Customer {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @Column(name = "cart_id")
-    private Long cartId;
+    @Column(name = "deleted")
+    private boolean deleted;
+
+    @OneToOne(mappedBy = "customer")
+    private Cart cart;
 
     public Customer() {
     }
@@ -33,12 +38,36 @@ public class Customer {
         return name;
     }
 
-    public boolean getIsActive() {
+    public boolean isActive() {
         return isActive;
     }
 
-    public Long getCartId() {
-            return cartId;
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     @Override
@@ -46,17 +75,17 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return isActive == customer.isActive && Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(cartId, customer.cartId);
+        return isActive == customer.isActive && deleted == customer.deleted && Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(cart, customer.cart);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, isActive, cartId);
+        return Objects.hash(id, name, isActive, deleted, cart);
     }
 
     @Override
     public String toString() {
-        return String.format("Customer: ID - %d, name - %s, cartID - %d, active - %s",
-                id, name, cartId, isActive ? "yes" : "no");
+        return String.format("Customer: ID - %d, name - %s, active - %s, cart - %s",
+                id, name, isActive ? "yes" : "no", cart);
     }
 }

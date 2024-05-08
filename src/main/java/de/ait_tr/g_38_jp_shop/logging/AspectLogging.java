@@ -34,7 +34,7 @@ public class AspectLogging {
         logger.info("Method {} in ProductServiceImpl finished working", joinPoint.getSignature().getName());
     }
 
-    @Pointcut("execution(* de.ait_tr.g_38_jp_shop.service.*.*(..))")
+    @Pointcut("execution(* de.ait_tr.g_38_jp_shop.service..*(..))")
     public void anyService() {}
 
     @Before("anyService()")
