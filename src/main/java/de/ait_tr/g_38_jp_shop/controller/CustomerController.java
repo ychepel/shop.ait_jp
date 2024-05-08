@@ -4,6 +4,8 @@ import de.ait_tr.g_38_jp_shop.domain.dto.CustomerDto;
 import de.ait_tr.g_38_jp_shop.service.interfaces.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -15,12 +17,12 @@ public class CustomerController {
     }
 
     @GetMapping
-    public Object getAll() {
+    public List<CustomerDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public Object get(@PathVariable Long id) {
+    public CustomerDto get(@PathVariable Long id) {
         return service.getById(id);
     }
 

@@ -5,6 +5,7 @@ import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -17,12 +18,12 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Object get(@PathVariable Long id) {
+    public ProductDto get(@PathVariable Long id) {
         return service.getById(id);
     }
 
     @GetMapping
-    public Object getAll() {
+    public List<ProductDto> getAll() {
         return service.getAll();
     }
 
