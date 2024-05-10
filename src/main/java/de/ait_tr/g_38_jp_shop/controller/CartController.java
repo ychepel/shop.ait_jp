@@ -2,6 +2,7 @@ package de.ait_tr.g_38_jp_shop.controller;
 
 import de.ait_tr.g_38_jp_shop.domain.dto.CartProductDto;
 import de.ait_tr.g_38_jp_shop.domain.entity.Product;
+import de.ait_tr.g_38_jp_shop.exception_handling.ThrowableController;
 import de.ait_tr.g_38_jp_shop.service.interfaces.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/customers/cart")
-public class CartController {
+public class CartController implements ThrowableController {
 
     private CustomerService service;
 

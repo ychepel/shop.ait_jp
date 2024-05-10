@@ -2,10 +2,7 @@ package de.ait_tr.g_38_jp_shop.service;
 
 import de.ait_tr.g_38_jp_shop.domain.dto.ProductDto;
 import de.ait_tr.g_38_jp_shop.domain.entity.Product;
-import de.ait_tr.g_38_jp_shop.exception_handling.exception.ProductSaveException;
-import de.ait_tr.g_38_jp_shop.exception_handling.exception.InvalidRequestException;
-import de.ait_tr.g_38_jp_shop.exception_handling.exception.ProductNotFoundException;
-import de.ait_tr.g_38_jp_shop.exception_handling.exception.ProductUpdateException;
+import de.ait_tr.g_38_jp_shop.exception_handling.exception.*;
 import de.ait_tr.g_38_jp_shop.repository.ProductRepository;
 import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
 import de.ait_tr.g_38_jp_shop.service.mapping.ProductMappingService;
@@ -33,14 +30,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto save(ProductDto productDto) {
+        Product product = mappingService.mapDtoToEntity(productDto);
+        product.setId(null);
         try {
-            Product product = mappingService.mapDtoToEntity(productDto);
-            product.setId(null);
             repository.save(product);
-            return mappingService.mapEntityToDto(product);
         } catch (Exception e) {
             throw new ProductSaveException("Trying to save invalid product", e);
         }
+        return mappingService.mapEntityToDto(product);
     }
 
     @Override
@@ -63,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductNotFoundException("Product not found");
         }
         if (!product.isActive() || product.isDeleted()) {
-            return null;
+            throw new ProductUnavailableException("Product is not available");
         }
 
         return mappingService.mapEntityToDto(product);
@@ -71,8 +68,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void update(ProductDto productDto) {
+        if (!repository.existsById(productDto.getProductId())) {
+            throw new ProductNotFoundException("Product is not exist");
+        }
+        Product product = mappingService.mapDtoToEntity(productDto);
         try {
-            Product product = mappingService.mapDtoToEntity(productDto);
             repository.save(product);
         } catch (Exception e) {
             throw new ProductUpdateException("Product cannot be updated", e);
@@ -81,12 +81,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ProductNotFoundException("Product is not exist");
+        }
         repository.deleteById(id);
     }
 
     @Override
     public void deleteByTitle(String title) {
         Product product = repository.findByTitle(title);
+        if (product == null) {
+            throw new ProductNotFoundException("Product is not exist");
+        }
         repository.delete(product);
     }
 
@@ -96,6 +102,8 @@ public class ProductServiceImpl implements ProductService {
         if (product != null) {
             product.setDeleted(false);
             repository.save(product);
+        } else {
+            throw new ProductNotFoundException("Product is not exist");
         }
     }
 

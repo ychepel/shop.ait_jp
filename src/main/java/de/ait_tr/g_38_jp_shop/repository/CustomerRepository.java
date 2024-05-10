@@ -11,5 +11,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Transactional
     void deleteByName(String name);
 
+    boolean existsByName(String name);
+
     Optional<Customer> findByIdAndIsActiveAndDeleted(Long id, boolean isActive, boolean deleted);
 }
