@@ -3,8 +3,10 @@ package de.ait_tr.g_38_jp_shop.service;
 import de.ait_tr.g_38_jp_shop.domain.dto.CartProductDto;
 import de.ait_tr.g_38_jp_shop.domain.dto.CustomerDto;
 import de.ait_tr.g_38_jp_shop.domain.dto.ProductDto;
+import de.ait_tr.g_38_jp_shop.domain.entity.Cart;
 import de.ait_tr.g_38_jp_shop.domain.entity.Customer;
 import de.ait_tr.g_38_jp_shop.domain.entity.Product;
+import de.ait_tr.g_38_jp_shop.exception_handling.exception.*;
 import de.ait_tr.g_38_jp_shop.repository.CustomerRepository;
 import de.ait_tr.g_38_jp_shop.service.interfaces.ProductService;
 import de.ait_tr.g_38_jp_shop.service.interfaces.CustomerService;
@@ -27,6 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerMappingService mappingService;
     private ProductService productService;
     private ProductMappingService productMappingService;
+    private Long customerId;
 
     public CustomerServiceImpl(
             CustomerRepository repository,
@@ -43,7 +46,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto save(CustomerDto customerDto) {
         Customer customer = mappingService.mapDtoToEntity(customerDto);
-        repository.save(customer);
+        try {
+            repository.save(customer);
+        } catch (Exception e) {
+            throw new CustomerSaveException("Error while saving customer", e);
+        }
         return mappingService.mapEntityToDto(customer);
     }
 
@@ -62,18 +69,32 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void update(CustomerDto customerDto) {
+        customerId = customerDto.getId();
+        if (!repository.existsById(customerId)) {
+            throw new CustomerNotFoundException("Customer is not exist");
+        }
         Customer customer = mappingService.mapDtoToEntity(customerDto);
-        customer.setId(customerDto.getId());
-        repository.save(customer);
+        customer.setId(customerId);
+        try {
+            repository.save(customer);
+        } catch (Exception e) {
+            throw new CustomerSaveException("Error while updating customer", e);
+        }
     }
 
     @Override
     public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new CustomerNotFoundException("Customer is not exist");
+        }
         repository.deleteById(id);
     }
 
     @Override
     public void deleteByName(String name) {
+        if (!repository.existsByName(name)) {
+            throw new CustomerNotFoundException("Customer is not exist");
+        }
         repository.deleteByName(name);
     }
 
@@ -83,6 +104,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer != null) {
             customer.setDeleted(false);
             repository.save(customer);
+        } else {
+            throw new CustomerNotFoundException("Customer is not exist");
         }
     }
 
@@ -101,10 +124,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public BigDecimal getCartTotalPrice(Long customerId) {
         Optional<Customer> customer = getActiveCustomer(customerId);
-        if (customer.isEmpty()) {
-            return null;
-        }
-
         List<Product> products = customer.get().getCart().getProducts();
         return products.stream()
                 .map(Product::getPrice)
@@ -114,16 +133,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public BigDecimal getCartAveragePrice(Long customerId) {
         Optional<Customer> customer = getActiveCustomer(customerId);
-        if (customer.isEmpty()) {
-            return null;
+        Cart cart = customer.get().getCart();
+        if (cart == null) {
+            throw new EmptyCartException("Customer does not have a cart");
         }
-
-        List<Product> products = customer.get().getCart().getProducts();
+        List<Product> products = cart.getProducts();
         BigDecimal totalPrice = products.stream()
                 .map(Product::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal productsQuantity = BigDecimal.valueOf(products.size());
-
         return totalPrice.divide(productsQuantity, RoundingMode.HALF_UP);
     }
 
@@ -131,18 +149,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public List<Product> addProductToCart(CartProductDto cartProductDto) {
         Optional<Customer> customer = getActiveCustomer(cartProductDto.getCustomerId());
-        if (customer.isEmpty()) {
-            return null;
-        }
-
         ProductDto productDto = productService.getById(cartProductDto.getProductId());
-        if (productDto == null) {
-            return null;
-        }
-
         List<Product> cartProducts = customer.get().getCart().getProducts();
         cartProducts.add(productMappingService.mapDtoToEntity(productDto));
-
         return cartProducts;
     }
 
@@ -150,18 +159,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public List<Product> removeProductFromCart(CartProductDto cartProductDto) {
         Optional<Customer> customer = getActiveCustomer(cartProductDto.getCustomerId());
-        if (customer.isEmpty()) {
-            return null;
-        }
-
         ProductDto productDto = productService.getById(cartProductDto.getProductId());
-        if (productDto == null) {
-            return null;
-        }
-
         List<Product> cartProducts = customer.get().getCart().getProducts();
         cartProducts.remove(productMappingService.mapDtoToEntity(productDto));
-
         return cartProducts;
     }
 
@@ -181,12 +181,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     private Optional<Customer> getActiveCustomer(Long id) {
         if (id == null || id < 1) {
-            throw new RuntimeException("Customer ID is invalid");
+            throw new InvalidRequestException("Customer ID is invalid");
         }
 
         Optional<Customer> customer = repository.findByIdAndIsActiveAndDeleted(id, true, false);
         if (customer.isEmpty()) {
-            throw new RuntimeException("Customer not found");
+            throw new CustomerNotFoundException("Customer not found");
         }
 
         return customer;

@@ -1,6 +1,9 @@
 package de.ait_tr.g_38_jp_shop.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
@@ -17,9 +20,12 @@ public class Product {
     private Long id;
 
     @Column(name = "title")
+    @NotEmpty(message = "Product title cannot be empty")
+    @Size(min = 5, message = "Product title should be greater or equal to 5 symbols")
     private String title;
 
     @Column(name = "price")
+    @Min(value = 1, message = "Product price could not be less than 1 BTC")
     private BigDecimal price;
 
     @Column(name = "is_active")
