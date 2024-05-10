@@ -1,7 +1,7 @@
 package de.ait_tr.g_38_jp_shop.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.SQLDelete;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ public class Customer {
     private Long id;
 
     @Column(name = "name")
-    @NotEmpty(message = "Customer name cannot be empty")
+    @NotBlank(message = "Customer name cannot be blank")
     private String name;
 
     @Column(name = "is_active")
