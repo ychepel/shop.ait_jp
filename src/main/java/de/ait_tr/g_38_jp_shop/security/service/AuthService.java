@@ -2,7 +2,7 @@ package de.ait_tr.g_38_jp_shop.security.service;
 
 import de.ait_tr.g_38_jp_shop.domain.entity.User;
 import de.ait_tr.g_38_jp_shop.security.dto.TokenResponseDto;
-import de.ait_tr.g_38_jp_shop.service.UserService;
+import de.ait_tr.g_38_jp_shop.service.interfaces.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import org.springframework.lang.NonNull;

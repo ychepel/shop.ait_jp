@@ -6,6 +6,22 @@ spring:
     password: qwerty-123
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+  mail:
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    host: smtp.ukr.net
+    port: 2525
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+            protocols: TLSv1.2
+            trust: smtp.ukr.net
 
 key: #https://www.devglan.com/online-tools/hmac-sha256-online
   access: Ws9n8o7ICr7NEmduNZTOi1AKtxRZflHwybQ11tcdtN8=

@@ -1,6 +1,7 @@
 package de.ait_tr.g_38_jp_shop.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -31,9 +32,45 @@ public class User implements UserDetails {
     )
     private Set<Role> roles;
 
+    @Column(name = "email")
+    @Email
+    private String email;
+
+    @Column(name = "is_active")
+    private boolean isActive;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return isActive == user.isActive && Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, roles, email, isActive);
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override
@@ -91,20 +128,8 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, password, roles);
-    }
-
-    @Override
     public String toString() {
-        return String.format("User: ID - %d, username - %s, roles - %s", id, username, roles);
+        return String.format("User: ID - %d, username - %s, email - %s, active - %s, roles - %s"
+                , id, username, email, isActive ? "yes" : "no", roles);
     }
 }
