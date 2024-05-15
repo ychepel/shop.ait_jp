@@ -21,7 +21,8 @@
                                  baseColumnNames="customer_id"
                                  constraintName="fk_cart_to_customer"
                                  referencedTableName="customer"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
 </databaseChangeLog>

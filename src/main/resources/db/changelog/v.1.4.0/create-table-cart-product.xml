@@ -25,13 +25,15 @@
                                  baseColumnNames="cart_id"
                                  constraintName="fk_cart_product_to_cart"
                                  referencedTableName="cart"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
 
         <addForeignKeyConstraint baseTableName="cart_product"
                                  baseColumnNames="product_id"
                                  constraintName="fk_cart_product_to_product"
                                  referencedTableName="product"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
 </databaseChangeLog>

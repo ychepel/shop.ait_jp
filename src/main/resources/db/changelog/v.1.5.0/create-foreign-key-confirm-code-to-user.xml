@@ -10,7 +10,8 @@
                                  baseColumnNames="user_id"
                                  constraintName="fk_confirm_code_to_user"
                                  referencedTableName="user"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
 
     </changeSet>
 
