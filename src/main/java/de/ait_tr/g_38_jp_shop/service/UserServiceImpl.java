@@ -58,4 +58,9 @@ public class UserServiceImpl implements UserService {
         emailService.sendConfirmationEmail(user);
         return mappingService.mapEntityToDto(user);
     }
+
+    @Override
+    public void update(User user) {
+        repository.save(user);
+    }
 }
