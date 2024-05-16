@@ -31,6 +31,9 @@ public class AuthService {
         String username = inboundUser.getUsername();
         User foundUser = (User) userService.loadUserByUsername(username);
 
+        if (!foundUser.isActive()) {
+            throw new AuthException("User is not active. Please confirm your email first.");
+        }
         if (encoder.matches(inboundUser.getPassword(), foundUser.getPassword())) {
             String accessToken = tokenService.generateAccessToken(foundUser);
             String refreshToken = tokenService.generateRefreshToken(foundUser);
