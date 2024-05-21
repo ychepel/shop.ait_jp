@@ -9,8 +9,8 @@ public class ProductNotFoundException extends RuntimeException {
     public ProductNotFoundException() {
     }
 
-    public ProductNotFoundException(String message) {
-        super(message);
+    public ProductNotFoundException(String productTitle) {
+        super(String.format("Product `%s` not found", productTitle));
     }
 
     public ProductNotFoundException(String message, Throwable cause) {

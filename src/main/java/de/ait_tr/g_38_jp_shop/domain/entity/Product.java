@@ -20,9 +20,9 @@ public class Product {
     @Column(name = "title")
     @NotBlank(message = "Product title cannot be blank")
     @Pattern(
-            regexp = "[A-Z][a-z]{2,}",
+            regexp = "[A-Z][a-z ]{2,}",
             message = "Product title should be at least 3 character length, " +
-                    "start with capital letter and may contain only latin characters"
+                    "start with capital letter and may contain only latin characters and spaces"
     )
     private String title;
 
@@ -44,6 +44,30 @@ public class Product {
 
     @Column(name = "deleted")
     private boolean isDeleted;
+
+    @Column(name = "image")
+    private String image;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return isActive == product.isActive && isDeleted == product.isDeleted && Objects.equals(id, product.id) && Objects.equals(title, product.title) && Objects.equals(price, product.price) && Objects.equals(image, product.image);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, price, isActive, isDeleted, image);
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Long getId() {
         return id;
@@ -83,19 +107,6 @@ public class Product {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return isActive == product.isActive && isDeleted == product.isDeleted && Objects.equals(id, product.id) && Objects.equals(title, product.title) && Objects.equals(price, product.price);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, price, isActive, isDeleted);
     }
 
     @Override

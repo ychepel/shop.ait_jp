@@ -1,4 +1,4 @@
-package de.ait_tr.g_38_jp_shop.security.config;
+package de.ait_tr.g_38_jp_shop.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;

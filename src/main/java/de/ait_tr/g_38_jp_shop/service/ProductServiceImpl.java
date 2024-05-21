@@ -9,6 +9,7 @@ import de.ait_tr.g_38_jp_shop.service.mapping.ProductMappingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -122,6 +123,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public BigDecimal getAveragePrice() {
         return getTotalPrice().divide(new BigDecimal(getTotalQuantity()), RoundingMode.HALF_UP);
+    }
+
+    @Override
+    @Transactional
+    public void attachImage(String imageUrl, String productTitle) {
+        Product product = repository.findByTitle(productTitle);
+        if (product == null) {
+            throw new ProductNotFoundException(productTitle);
+        }
+        product.setImage(imageUrl);
     }
 
     private Stream<Product> getFilteredStream() {

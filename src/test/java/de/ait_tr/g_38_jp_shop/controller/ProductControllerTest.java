@@ -52,6 +52,8 @@ class ProductControllerTest {
     private final String ADMIN_NAME = "TAdmin";
     private final String USER_NAME = "TUser";
     private final String PASSWORD = "security";
+    private final String ADMIN_EMAIL = "admin@test.com.ua";
+    private final String USER_EMAIL = "user@test.com.ua";
     private final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
     private final String USER_ROLE_NAME = "ROLE_USER";
 
@@ -87,6 +89,7 @@ class ProductControllerTest {
             admin.setUsername(ADMIN_NAME);
             admin.setPassword(encoder.encode(PASSWORD));
             admin.setRoles(Set.of(roleAdmin, roleUser));
+            admin.setEmail(ADMIN_EMAIL);
 
             userRepository.save(admin);
         }
@@ -98,6 +101,7 @@ class ProductControllerTest {
             user.setUsername(USER_NAME);
             user.setPassword(encoder.encode(PASSWORD));
             user.setRoles(Set.of(roleUser == null ? roleRepository.findByTitle(USER_ROLE_NAME) : roleUser));
+            user.setEmail(USER_EMAIL);
 
             userRepository.save(user);
         }
